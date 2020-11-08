@@ -33,8 +33,8 @@ public class ESController {
     private TransportClient transportClient;
 
     @GetMapping("/get")
-    public ResponseEntity get(@RequestParam(name="id")Integer id){
-        GetResponse getResponse = transportClient.prepareGet("movie",null,id.toString()).get();
+    public ResponseEntity get(@RequestParam(name = "id") Integer id) {
+        GetResponse getResponse = transportClient.prepareGet("movie", null, id.toString()).get();
         return new ResponseEntity(getResponse.getSource(), HttpStatus.OK);
     }
 
@@ -43,33 +43,33 @@ public class ESController {
     public ResponseEntity importdata() throws IOException {
         BulkRequest bulkRequest = new BulkRequest();
         int lineId = 0;
-        InputStreamReader in = new InputStreamReader(new FileInputStream("./tmdb_5000_movies.csv"), StandardCharsets.UTF_8);
+        InputStreamReader in = new InputStreamReader(new FileInputStream("E:\\all\\idea_workspace\\combiner\\csvimportes-1\\tmdb_5000_movies.csv"), StandardCharsets.UTF_8);
         CSVReader reader = new CSVReader(in, ',');
         List<String[]> allRecords = reader.readAll();
         for (String[] records : allRecords) {
             lineId++;
-            if(lineId == 1){
+            if (lineId == 1) {
                 continue;
             }
-            try{
+            try {
                 JSONArray castJsonArray = JSONArray.parseArray(records[20]);
                 String character = (String) castJsonArray.getJSONObject(0).get("character");
                 String name = (String) castJsonArray.getJSONObject(0).get("name");
                 JSONObject cast = new JSONObject();
-                cast.put("character",character);
-                cast.put("name",name);
+                cast.put("character", character);
+                cast.put("name", name);
                 String date = records[11];
-                if(date == null || date.equals("")){
+                if (date == null || date.equals("")) {
                     date = "1970/01/01";
                 }
-                bulkRequest.add(new IndexRequest("movie", "_doc", String.valueOf(lineId-1)).source(XContentType.JSON,
+                bulkRequest.add(new IndexRequest("movie", "_doc", String.valueOf(lineId - 1)).source(XContentType.JSON,
                         "title", records[17],
-                        "tagline",records[16],
-                        "release_date",date,
-                        "popularity",records[8],
-                        "cast",cast,
-                        "overview",records[7]));
-            } catch(Exception ex) {
+                        "tagline", records[16],
+                        "release_date", date,
+                        "popularity", records[8],
+                        "cast", cast,
+                        "overview", records[7]));
+            } catch (Exception ex) {
                 //ex.printStackTrace();
             }
         }

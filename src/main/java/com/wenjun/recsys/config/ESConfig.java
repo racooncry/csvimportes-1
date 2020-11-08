@@ -17,19 +17,19 @@ import java.net.InetAddress;
 public class ESConfig {
 
     @Bean
-    public TransportClient getClient(){
+    public TransportClient getClient() {
         TransportClient transportClient = null;
         try {
             Settings settings = Settings.builder()
-                    .put("cluster.name","recsys").build();
+                    .put("cluster.name", "cluster").build();
             transportClient = new PreBuiltTransportClient(settings);
-            TransportAddress firstAddress = new TransportAddress(InetAddress.getByName("127.0.0.1"),Integer.parseInt("9300"));
-            TransportAddress secondAddress = new TransportAddress(InetAddress.getByName("127.0.0.1"),Integer.parseInt("9301"));
-            TransportAddress thirdAddress = new TransportAddress(InetAddress.getByName("127.0.0.1"),Integer.parseInt("9302"));
+            TransportAddress firstAddress = new TransportAddress(InetAddress.getByName("192.168.37.142"), Integer.parseInt("9300"));
+            TransportAddress secondAddress = new TransportAddress(InetAddress.getByName("192.168.37.143"), Integer.parseInt("9300"));
+            TransportAddress thirdAddress = new TransportAddress(InetAddress.getByName("192.168.37.145"), Integer.parseInt("9300"));
             transportClient.addTransportAddress(firstAddress);
             transportClient.addTransportAddress(secondAddress);
             transportClient.addTransportAddress(thirdAddress);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return transportClient;
